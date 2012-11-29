@@ -29,7 +29,7 @@ class WickedPdf
   end
 
   def pdf_from_string(string, options={})
-    command = "\"#{@exe_path}\" #{'-q ' unless on_windows?}#{parse_options(options)} - - " # -q for no errors on stdout
+    command = "\"#{@exe_path}\" #{'-q ' unless on_windows?}#{parse_options(options)} - #{parse_page_options(options)} -" # -q for no errors on stdout
     print_command(command) if in_development_mode?
     pdf, err = Open3.popen3(command) do |stdin, stdout, stderr|
       stdin.binmode
@@ -62,16 +62,22 @@ class WickedPdf
 
     def parse_options(options)
       [
-        parse_extra(options),
-        parse_header_footer(:header => options.delete(:header),
-                            :footer => options.delete(:footer),
-                            :layout => options[:layout]),
-        parse_toc(options.delete(:toc)),
-        parse_outline(options.delete(:outline)),
         parse_margins(options.delete(:margin)),
+        parse_dpi(options.delete(:dpi)),
+        parse_page_size(options.delete(:page_size)),
+        parse_cover(options.delete(:cover)),
+        parse_toc(options.delete(:toc)),
+        parse_extra(options),
+        parse_outline(options.delete(:outline)),
         parse_others(options),
         parse_basic_auth(options)
       ].join(' ')
+    end
+
+    def parse_page_options(options)
+      parse_header_footer(:header => options.delete(:header),
+                          :footer => options.delete(:footer),
+                          :layout => options[:layout])
     end
 
     def parse_extra(options)
@@ -91,6 +97,10 @@ class WickedPdf
       if value.is_a?(Array)
         return value.collect { |v| make_option(name, v, type) }.join('')
       end
+
+      return " cover #{value}" if name == 'cover'
+      return " toc #{value}" if name == 'toc'
+
       "--#{name.gsub('_', '-')} " + case type
         when :boolean then ""
         when :numeric then value.to_s
@@ -125,34 +135,8 @@ class WickedPdf
           end
         end
       end unless options.blank?
+      File.open('/tmp/wicked', 'w') {|f| f.write(r) }
       r
-    end
-
-    def parse_toc(options)
-      r = '--toc ' unless options.nil?
-      unless options.blank?
-        r += make_options(options, [ :font_name, :header_text], "toc")
-        r +=make_options(options, [ :depth,
-                                    :header_fs,
-                                    :l1_font_size,
-                                    :l2_font_size,
-                                    :l3_font_size,
-                                    :l4_font_size,
-                                    :l5_font_size,
-                                    :l6_font_size,
-                                    :l7_font_size,
-                                    :l1_indentation,
-                                    :l2_indentation,
-                                    :l3_indentation,
-                                    :l4_indentation,
-                                    :l5_indentation,
-                                    :l6_indentation,
-                                    :l7_indentation], "toc", :numeric)
-        r +=make_options(options, [ :no_dots,
-                                    :disable_links,
-                                    :disable_back_links], "toc", :boolean)
-      end
-      return r
     end
 
     def parse_outline(options)
@@ -166,23 +150,35 @@ class WickedPdf
       make_options(options, [:top, :bottom, :left, :right], "margin", :numeric) unless options.blank?
     end
 
+    def parse_dpi(value)
+      make_option("dpi", value, :numeric) unless value.blank?
+    end
+
+    def parse_page_size(value)
+      make_option("page-size", value, :string) unless value.blank?
+    end
+
+    def parse_cover(value)
+      make_option("cover", value, :string) unless value.blank?
+    end
+
+    def parse_toc(value)
+      make_option("toc", value, :string) unless value.blank?
+    end
+
     def parse_others(options)
       unless options.blank?
         r = make_options(options, [ :orientation,
-                                    :page_size,
                                     :page_width,
                                     :page_height,
                                     :proxy,
                                     :username,
                                     :password,
-                                    :cover,
-                                    :dpi,
                                     :encoding,
                                     :user_style_sheet])
         r +=make_options(options, [ :cookie,
                                     :post], "", :name_value)
-        r +=make_options(options, [ :redirect_delay,
-                                    :zoom,
+        r +=make_options(options, [ :zoom,
                                     :page_offset,
                                     :javascript_delay], "", :numeric)
         r +=make_options(options, [ :book,
