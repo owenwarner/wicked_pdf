@@ -27,7 +27,7 @@ format.pdf do
             :wkhtmltopdf      => '/usr/local/bin/wkhtmltopdf'
 end
 ```
-Be sure to read the most up-to-date wkhtmltopdf manual, which, is currently [0.10.0 RC 2](http://madalgo.au.dk/~jakobt/wkhtmltoxdoc/wkhtmltopdf_0.10.0_rc2-doc.html)
+Be sure to read the most up-to-date wkhtmltopdf manual, which, is currently [0.10.0 RC 2](http://madalgo.au.dk/~jakobt/wkhtmltoxdoc/wkhtmltopdf_0.10.0_rc2-doc.html).
 
 ## Versioning
-I've gone ahead and made this Gem version to 1.0.x to keep it very separate from the mainline that Miles has at 0.8.0 currently. This has very little to do with progress on the Gem over Miles', except in terms of >= 0.11.0 RC1 support.
+I've gone ahead and made this Gem version to 1.0.x to keep it very separate from the mainline that Miles has at 0.8.0 currently. This has very little to do with progress of the Gem over Miles', except in terms of >= 0.11.0 RC1 support.
