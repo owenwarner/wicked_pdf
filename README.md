@@ -12,9 +12,9 @@ Below you will find an implementation I am currently using and can help you get 
 
 ```ruby
 format.pdf do
-  render  :pdf              => "#{pdf_file_name}",
+  render  :pdf                => "#{pdf_file_name}",
             :disposition      => 'attachment',
-            :template       => 'document_versions/pdf-show.html.erb',
+            :template         => 'document_versions/pdf-show.html.erb',
             :layout           => 'pdf.html.erb',
             :dpi              => 96,
             :javascript_delay => 1000,
@@ -30,4 +30,4 @@ end
 Be sure to read the most up-to-date wkhtmltopdf manual, which, is currently [0.10.0 RC 2](http://madalgo.au.dk/~jakobt/wkhtmltoxdoc/wkhtmltopdf_0.10.0_rc2-doc.html)
 
 ## Versioning
-I've gone ahead and make this Gem version at 1.0.x to keep it very separate from the mainline from Miles which is at 0.8.0 currently.
+I've gone ahead and made this Gem version to 1.0.x to keep it very separate from the mainline that Miles has at 0.8.0 currently. This has very little to do with progress on the Gem over Miles', except in terms of >= 0.11.0 RC1 support.
