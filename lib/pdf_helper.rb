@@ -83,7 +83,7 @@ module PdfHelper
           @hf_tempfiles = [] if ! defined?(@hf_tempfiles)
           @hf_tempfiles.push( tf=WickedPdfTempfile.new("wicked_#{hf}_pdf.html") )
           options[hf][:html][:layout] ||=  options[:layout]
-          tf.write render_to_string(:template => options[hf][:html][:template], :layout => options[hf][:html][:layout], :locals => options[hf][:html][:locals], :formats => options[hf][:html][:formats], :handlers => options[hf][:html][:handlers])
+          tf.write render_to_string(:template => options[hf][:html][:template], :layout => options[hf][:html][:layout])
           tf.flush
           options[hf][:html].delete(:template)
           options[hf][:html][:url] = "file://#{tf.path}"
